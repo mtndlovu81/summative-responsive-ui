@@ -1,7 +1,7 @@
 import * as state from './state.js';
 import { initForm, startEdit } from './forms.js';
 import { initSettings } from './settings.js';
-import { renderTable, sortRecords, announce, renderDashboard } from './ui.js';
+import { renderTable, sortRecords, announce, renderDashboard, focusEl } from './ui.js';
 import { compileRegex } from './validators.js';
 import { filterByRegex } from './search.js';
 
@@ -31,11 +31,7 @@ function navigateTo(sectionId) {
 }
 
 function updateNavIndicator(sectionId) {
-  let activeLink;
-  if (sectionId === 'dashboard' && !location.hash) {
-    activeLink = document.querySelector('.nav-link[data-home]');
-  }
-  activeLink = activeLink || document.querySelector(`.nav-link[data-section="${sectionId}"]:not([data-home])`);
+  const activeLink = document.querySelector(`.nav-link[data-section="${sectionId}"]`);
   if (!activeLink || !indicator) return;
 
   const nav = activeLink.closest('ul');
@@ -61,12 +57,15 @@ navLinks.forEach(link => {
     const section = link.dataset.section;
     if (!section) return;
     navigateTo(section);
-    if (link.dataset.home) {
-      history.pushState(null, '', location.pathname);
-    } else {
-      history.pushState(null, '', `#${section}`);
-    }
+    history.pushState(null, '', `#${section}`);
   });
+});
+
+// Brand logo → dashboard with clean URL
+document.getElementById('brand-home').addEventListener('click', e => {
+  e.preventDefault();
+  navigateTo('dashboard');
+  history.pushState(null, '', location.pathname);
 });
 
 window.addEventListener('hashchange', () => {
@@ -134,6 +133,7 @@ document.querySelectorAll('.sort-btn').forEach(btn => {
 
     const arrows = { date: sortDirection === 'asc' ? '↑' : '↓', description: sortDirection === 'asc' ? 'A→Z' : 'Z→A', amount: sortDirection === 'asc' ? '↑' : '↓' };
     btn.textContent = `${field.charAt(0).toUpperCase() + field.slice(1)} ${arrows[field]}`;
+    btn.setAttribute('aria-label', `Sort by ${field}, ${sortDirection === 'asc' ? 'ascending' : 'descending'}`);
 
     refreshTable();
   });
@@ -159,6 +159,12 @@ document.getElementById('records-body').addEventListener('click', e => {
       state.deleteRecord(record.id);
       refreshTable();
       announce('Transaction deleted');
+      const firstEdit = document.querySelector('#records-body tr:first-child .btn-edit');
+      if (firstEdit) {
+        focusEl(firstEdit);
+      } else {
+        focusEl('#empty-state');
+      }
     }
   }
 });
@@ -179,8 +185,9 @@ state.subscribe(event => {
     if (currentSection === 'transactions') refreshTable();
     if (currentSection === 'dashboard') renderDashboard(state.records, state.settings);
   }
-  if (event.type === 'settings-changed' && currentSection === 'dashboard') {
-    renderDashboard(state.records, state.settings);
+  if (event.type === 'settings-changed') {
+    if (currentSection === 'dashboard') renderDashboard(state.records, state.settings);
+    if (currentSection === 'transactions') refreshTable();
   }
 });
 
@@ -190,6 +197,7 @@ state.init();
 initForm(() => {
   navigateTo('transactions');
   history.pushState(null, '', '#transactions');
+  focusEl('#records-body tr:first-child .btn-edit');
 });
 
 initSettings();

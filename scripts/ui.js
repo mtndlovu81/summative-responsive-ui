@@ -20,6 +20,13 @@ export function announce(message, priority = 'polite') {
   requestAnimationFrame(() => { el.textContent = message; });
 }
 
+export function focusEl(selector) {
+  requestAnimationFrame(() => {
+    const el = typeof selector === 'string' ? document.querySelector(selector) : selector;
+    el?.focus();
+  });
+}
+
 function formatCurrency(amount, code = 'USD') {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: code }).format(amount);
 }

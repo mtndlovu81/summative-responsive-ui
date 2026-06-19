@@ -1,4 +1,4 @@
-import { validate } from './validators.js';
+import { validate, formatAmount, formatRate } from './validators.js';
 import { exportJSON, validateImport } from './storage.js';
 import { escapeHTML } from './search.js';
 import { getCatColor } from './ui.js';
@@ -30,6 +30,7 @@ function renderBudgetTable() {
     const budget = categoryBudgets[cat] ?? 0;
     const isOther = cat === 'Other';
     const color = getCatColor(cat);
+    const slug = cat.toLowerCase().replace(/\s+/g, '-');
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -37,11 +38,11 @@ function renderBudgetTable() {
         <span class="cat-dot" style="background:${color}" aria-hidden="true"></span>
         ${isOther
           ? `<span>${escapeHTML(cat)}</span> <span class="other-label">(catch-all)</span>`
-          : `<input type="text" class="budget-cat-input" value="${escapeHTML(cat)}" data-original="${escapeHTML(cat)}" aria-label="Category name">`
+          : `<input type="text" id="cat-name-${slug}" class="budget-cat-input" value="${escapeHTML(cat)}" data-original="${escapeHTML(cat)}" aria-label="Category name">`
         }
       </td>
       <td>
-        <input type="text" class="budget-amt-input mono" value="${budget.toFixed(2)}" inputmode="decimal" aria-label="${escapeHTML(cat)} budget amount" data-cat="${escapeHTML(cat)}">
+        <input type="text" id="cat-budget-${slug}" class="budget-amt-input mono" value="${budget.toFixed(2)}" inputmode="decimal" aria-label="${escapeHTML(cat)} budget amount" data-cat="${escapeHTML(cat)}">
         <p class="field-error" role="alert"></p>
       </td>
       <td>
@@ -72,6 +73,7 @@ function attachBudgetListeners() {
       input.style.borderColor = msg ? 'var(--color-danger)' : 'var(--color-border)';
 
       if (!msg) {
+        input.value = formatAmount(input.value);
         const cat = input.dataset.cat;
         const newBudgets = { ...state.settings.categoryBudgets, [cat]: parseFloat(input.value) };
         state.updateSettings({ categoryBudgets: newBudgets });
@@ -168,10 +170,10 @@ function initAddBudget() {
     tr.className = 'new-budget-row';
     tr.innerHTML = `
       <td>
-        <input type="text" class="budget-cat-input" placeholder="Category name" aria-label="New category name">
+        <input type="text" id="new-budget-cat" class="budget-cat-input" placeholder="Category name" aria-label="New category name">
       </td>
       <td>
-        <input type="text" class="budget-amt-input mono" placeholder="0.00" inputmode="decimal" aria-label="Budget amount">
+        <input type="text" id="new-budget-amt" class="budget-amt-input mono" placeholder="0.00" inputmode="decimal" aria-label="Budget amount">
         <p class="field-error" role="alert"></p>
       </td>
       <td>
@@ -237,13 +239,18 @@ function initAddBudget() {
 // ── Currency ──
 
 function initCurrencySettings() {
-  // Rate validation
+  // Rate validation + auto-format
   document.querySelectorAll('.currency-rate').forEach(input => {
     input.addEventListener('input', () => {
       const msg = validate('rate', input.value);
       input.style.borderColor = msg ? 'var(--color-danger)' : 'var(--color-border)';
       const errEl = input.closest('.currency-row').querySelector('.field-error');
       if (errEl) errEl.textContent = msg || '';
+    });
+    input.addEventListener('blur', () => {
+      if (!validate('rate', input.value)) {
+        input.value = formatRate(input.value);
+      }
     });
   });
 

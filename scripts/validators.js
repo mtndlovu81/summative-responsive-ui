@@ -54,6 +54,20 @@ export function validateDate(value) {
   return null;
 }
 
+export function formatAmount(value) {
+  const num = parseFloat(value);
+  if (isNaN(num)) return value;
+  return num.toFixed(2);
+}
+
+export function formatRate(value) {
+  const num = parseFloat(value);
+  if (isNaN(num)) return value;
+  const str = num.toString();
+  const decimals = str.includes('.') ? str.split('.')[1].length : 0;
+  return num.toFixed(Math.max(2, Math.min(decimals, 6)));
+}
+
 export function hasDuplicateWord(text) {
   return DUPLICATE_WORD_RE.test(text);
 }

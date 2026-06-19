@@ -13,19 +13,16 @@
   <link rel="stylesheet" href="styles/animations.css">
 </head>
 <body>
-  <a href="#main-content" class="sr-only skip-link">Skip to content</a>
-
   <header class="app-header">
-    <div class="header-brand">
+    <a href="#" class="header-brand" id="brand-home" aria-label="SET — go to dashboard">
       <svg class="brand-logo" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/>
         <path d="M8 12.5l3 3 5-6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       <span class="brand-name">SET</span>
-    </div>
+    </a>
     <nav class="app-nav" aria-label="Main navigation">
       <ul role="list">
-        <li><a href="#" class="nav-link" data-section="dashboard" data-home="true">Home</a></li>
         <li><a href="#dashboard" class="nav-link" data-section="dashboard">Dashboard</a></li>
         <li><a href="#transactions" class="nav-link" data-section="transactions">Transactions</a></li>
         <li><a href="#add" class="nav-link" data-section="add">Add +</a></li>
@@ -222,23 +219,23 @@
         <p class="settings-base-currency">Base currency: <strong>USD</strong></p>
         <div id="settings-currencies">
           <div class="currency-row">
-            <label class="currency-label">EUR</label>
-            <input type="text" class="currency-rate mono" value="0.92" inputmode="decimal" aria-label="EUR exchange rate" data-code="EUR">
+            <span class="currency-label">EUR</span>
+            <input type="text" id="rate-eur" class="currency-rate mono" value="0.92" inputmode="decimal" aria-label="EUR exchange rate" data-code="EUR">
             <p class="field-error" role="alert"></p>
           </div>
           <div class="currency-row">
-            <label class="currency-label">GBP</label>
-            <input type="text" class="currency-rate mono" value="0.79" inputmode="decimal" aria-label="GBP exchange rate" data-code="GBP">
+            <span class="currency-label">GBP</span>
+            <input type="text" id="rate-gbp" class="currency-rate mono" value="0.79" inputmode="decimal" aria-label="GBP exchange rate" data-code="GBP">
             <p class="field-error" role="alert"></p>
           </div>
           <div class="currency-row">
-            <label class="currency-label">RWF</label>
-            <input type="text" class="currency-rate mono" value="1465.54" inputmode="decimal" aria-label="RWF exchange rate" data-code="RWF">
+            <span class="currency-label">RWF</span>
+            <input type="text" id="rate-rwf" class="currency-rate mono" value="1465.54" inputmode="decimal" aria-label="RWF exchange rate" data-code="RWF">
             <p class="field-error" role="alert"></p>
           </div>
           <div class="currency-row">
-            <input type="text" class="currency-code" maxlength="3" placeholder="e.g. ZAR" aria-label="Currency code" style="text-transform:uppercase">
-            <input type="text" class="currency-rate mono" placeholder="0.00" inputmode="decimal" aria-label="Exchange rate">
+            <input type="text" id="rate-custom-code" class="currency-code" maxlength="3" placeholder="e.g. ZAR" aria-label="Currency code" style="text-transform:uppercase">
+            <input type="text" id="rate-custom-value" class="currency-rate mono" placeholder="0.00" inputmode="decimal" aria-label="Exchange rate">
             <p class="field-error" role="alert"></p>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { validate, validateDate, hasDuplicateWord } from './validators.js';
+import { validate, validateDate, hasDuplicateWord, formatAmount } from './validators.js';
 import * as state from './state.js';
 
 let editId = null;
@@ -29,6 +29,12 @@ export function initForm(onSave) {
 
   amountInput.addEventListener('input', () => {
     showFieldError('amount', amountInput.value);
+  });
+
+  amountInput.addEventListener('blur', () => {
+    if (!validate('amount', amountInput.value)) {
+      amountInput.value = formatAmount(amountInput.value);
+    }
   });
 
   dateInput.addEventListener('change', () => {
@@ -106,7 +112,7 @@ export function initForm(onSave) {
 export function startEdit(record) {
   editId = record.id;
   document.getElementById('f-description').value = record.description;
-  document.getElementById('f-amount').value = String(record.amount);
+  document.getElementById('f-amount').value = record.amount.toFixed(2);
   document.getElementById('f-category').value = record.category;
   document.getElementById('f-date').value = record.date;
   document.getElementById('add-heading').textContent = 'Edit Transaction';

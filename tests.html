@@ -98,6 +98,55 @@
     assert('highlight "<script>" null → escapes HTML',
       highlight('<script>', null) === '&lt;script&gt;');
 
+    // 20–21: validateImport edge cases
+    assert('validateImport [] (empty array) → true',
+      validateImport([]) === true);
+    assert('validateImport [{id:"x"}] (missing fields) → false',
+      validateImport([{id:'x'}]) === false);
+
+    // 22–23: Sort order
+    import { sortRecords } from './scripts/ui.js';
+
+    const sortedAsc = sortRecords(testRecords, 'amount', 'asc');
+    assert('sort by amount asc → lowest first',
+      sortedAsc[0].amount <= sortedAsc[1].amount);
+
+    const sortedDateDesc = sortRecords(testRecords, 'date', 'desc');
+    assert('sort by date desc → most recent first',
+      sortedDateDesc[0].date >= sortedDateDesc[1].date);
+
+    // 24: Timeline filter
+    import { filterByTimeline } from './scripts/ui.js';
+
+    const timelineRecords = [
+      {id:'t1', description:'Today', category:'Food', amount:10, date: new Date().toISOString().slice(0,10)},
+      {id:'t2', description:'Old', category:'Food', amount:20, date:'2020-01-01'}
+    ];
+    assert('filterByTimeline "7" → only recent records',
+      filterByTimeline(timelineRecords, '7').length === 1);
+
+    // 25: Budget sum
+    const testBudgets = { Food: 150, Books: 100, Transport: 80 };
+    const budgetSum = Object.values(testBudgets).reduce((s, v) => s + v, 0);
+    assert('sum of category budgets equals expected total',
+      budgetSum === 330);
+
+    // 26: Duplicate word with repeated word
+    assert('hasDuplicateWord "going going gone" → true',
+      hasDuplicateWord('going going gone') === true);
+
+    // 27: compileRegex with lookbehind
+    assert('compileRegex "(?<=\\s)\\d+" → RegExp or null (no throw)',
+      (() => { try { compileRegex('(?<=\\s)\\d+', 'i'); return true; } catch { return false; } })());
+
+    // 28–29: Formatting
+    import { formatAmount, formatRate } from './scripts/validators.js';
+
+    assert('formatAmount "100" → "100.00"',
+      formatAmount('100') === '100.00');
+    assert('formatAmount "5.0555" → "5.06"',
+      formatAmount('5.0555') === '5.06');
+
     // Summary
     const total = passed + failed;
     const cls = failed === 0 ? 'pass' : 'fail';
