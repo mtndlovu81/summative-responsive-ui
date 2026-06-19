@@ -1,3 +1,7 @@
+import * as state from './state.js';
+import { initForm } from './forms.js';
+import { initSettings } from './settings.js';
+
 const sections = document.querySelectorAll('main > section');
 const navLinks = document.querySelectorAll('.nav-link');
 const indicator = document.querySelector('.nav-indicator');
@@ -54,6 +58,15 @@ window.addEventListener('hashchange', () => {
 });
 
 window.addEventListener('resize', () => updateNavIndicator(currentSection));
+
+state.init();
+
+initForm(() => {
+  navigateTo('transactions');
+  history.pushState(null, '', '#transactions');
+});
+
+initSettings();
 
 const startHash = location.hash.slice(1) || 'dashboard';
 navigateTo(startHash);

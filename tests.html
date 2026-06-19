@@ -3,13 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SFT Tests</title>
+  <title>Student Expense Tracker (SET) — Tests</title>
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #0A0F1E; color: #F0F4FF; padding: 2rem; }
+    h1 { margin-bottom: 1rem; }
+    .pass { color: #10B981; }
+    .fail { color: #EF4444; }
+    pre { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.8; }
+    .summary { margin-top: 1rem; font-weight: 600; font-size: 1.1rem; }
+  </style>
 </head>
 <body>
-  <h1>Student Expense Tracker (SET) — Tests</h1>
+  <h1>SET — Test Suite</h1>
   <pre id="output"></pre>
   <script type="module">
-    console.log('Tests ready');
+    import { validate, hasDuplicateWord, compileRegex } from './scripts/validators.js';
+    import { validateImport } from './scripts/storage.js';
+
+    const out = document.getElementById('output');
+    let passed = 0;
+    let failed = 0;
+
+    function assert(label, condition) {
+      if (condition) {
+        passed++;
+        out.innerHTML += `<span class="pass">✓ ${label}</span>\n`;
+      } else {
+        failed++;
+        out.innerHTML += `<span class="fail">✗ ${label}</span>\n`;
+      }
+    }
+
+    // 1–3: Description validation
+    assert('validate description "Lunch" → null',
+      validate('description', 'Lunch') === null);
+    assert('validate description " Lunch" (leading space) → error',
+      validate('description', ' Lunch') !== null);
+    assert('validate description "Lunch " (trailing space) → error',
+      validate('description', 'Lunch ') !== null);
+
+    // 4–6: Amount validation
+    assert('validate amount "12.50" → null',
+      validate('amount', '12.50') === null);
+    assert('validate amount "12.5.0" → error',
+      validate('amount', '12.5.0') !== null);
+    assert('validate amount "0" → null',
+      validate('amount', '0') === null);
+
+    // 7–8: Date validation
+    assert('validate date "2025-09-25" → null',
+      validate('date', '2025-09-25') === null);
+    assert('validate date "2025-13-01" → error',
+      validate('date', '2025-13-01') !== null);
+
+    // 9–10: Category validation
+    assert('validate category "Food" → null',
+      validate('category', 'Food') === null);
+    assert('validate category "123food" → error',
+      validate('category', '123food') !== null);
+
+    // 11–12: Duplicate word detection
+    assert('hasDuplicateWord "the the test" → true',
+      hasDuplicateWord('the the test') === true);
+    assert('hasDuplicateWord "the quick brown fox" → false',
+      hasDuplicateWord('the quick brown fox') === false);
+
+    // 13–14: compileRegex
+    assert('compileRegex "coffee|tea" → RegExp',
+      compileRegex('coffee|tea') instanceof RegExp);
+    assert('compileRegex "[invalid" → null',
+      compileRegex('[invalid') === null);
+
+    // 15–16: validateImport
+    const validData = [
+      {"id":"txn_0001","description":"Lunch","amount":12.50,"category":"Food","date":"2025-09-25","createdAt":"2025-09-25T12:00:00.000Z","updatedAt":"2025-09-25T12:00:00.000Z"}
+    ];
+    assert('validateImport valid array → true',
+      validateImport(validData) === true);
+    assert('validateImport "not an array" → false',
+      validateImport("not an array") === false);
+
+    // Summary
+    const total = passed + failed;
+    const cls = failed === 0 ? 'pass' : 'fail';
+    out.innerHTML += `\n<span class="summary ${cls}">${passed}/${total} tests passed</span>\n`;
   </script>
 </body>
 </html>
