@@ -83,6 +83,21 @@
     assert('validateImport "not an array" → false',
       validateImport("not an array") === false);
 
+    // 17–19: Search & highlight
+    import { filterByRegex, highlight } from './scripts/search.js';
+
+    const testRecords = [
+      {id:'t1', description:'Coffee with friends', category:'Food', amount:8.75, date:'2025-09-28'},
+      {id:'t2', description:'Bus pass', category:'Transport', amount:45, date:'2025-09-20'}
+    ];
+
+    assert('filterByRegex /coffee/i → returns matching record',
+      filterByRegex(testRecords, /coffee/i).length === 1);
+    assert('highlight "Coffee with friends" /coffee/i → contains <mark>',
+      highlight('Coffee with friends', /coffee/i).includes('<mark>Coffee</mark>'));
+    assert('highlight "<script>" null → escapes HTML',
+      highlight('<script>', null) === '&lt;script&gt;');
+
     // Summary
     const total = passed + failed;
     const cls = failed === 0 ? 'pass' : 'fail';

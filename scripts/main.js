@@ -1,11 +1,18 @@
 import * as state from './state.js';
-import { initForm } from './forms.js';
+import { initForm, startEdit } from './forms.js';
 import { initSettings } from './settings.js';
+import { renderTable, sortRecords, announce } from './ui.js';
+import { compileRegex } from './validators.js';
+import { filterByRegex } from './search.js';
 
 const sections = document.querySelectorAll('main > section');
 const navLinks = document.querySelectorAll('.nav-link');
 const indicator = document.querySelector('.nav-indicator');
 let currentSection = 'dashboard';
+
+let sortField = 'date';
+let sortDirection = 'desc';
+let currentRegex = null;
 
 function navigateTo(sectionId) {
   sections.forEach(s => { s.hidden = true; });
@@ -18,6 +25,8 @@ function navigateTo(sectionId) {
 
   currentSection = sectionId;
   updateNavIndicator(sectionId);
+
+  if (sectionId === 'transactions') refreshTable();
 }
 
 function updateNavIndicator(sectionId) {
@@ -38,6 +47,13 @@ function updateNavIndicator(sectionId) {
   indicator.style.setProperty('--indicator-width', `${linkRect.width}px`);
 }
 
+function refreshTable() {
+  let filtered = filterByRegex(state.records, currentRegex);
+  let sorted = sortRecords(filtered, sortField, sortDirection);
+  renderTable(sorted, currentRegex, state.settings);
+}
+
+// Nav
 navLinks.forEach(link => {
   link.addEventListener('click', e => {
     e.preventDefault();
@@ -59,6 +75,101 @@ window.addEventListener('hashchange', () => {
 
 window.addEventListener('resize', () => updateNavIndicator(currentSection));
 
+// Search
+const searchInput = document.getElementById('search-input');
+const searchCI = document.getElementById('search-ci');
+const searchError = document.getElementById('search-error');
+
+function handleSearch() {
+  const val = searchInput.value.trim();
+  if (!val) {
+    currentRegex = null;
+    searchError.classList.add('hidden');
+    searchError.textContent = '';
+    refreshTable();
+    return;
+  }
+  const flags = searchCI.checked ? 'i' : '';
+  const re = compileRegex(val, flags);
+  if (!re) {
+    searchError.textContent = 'Invalid regex pattern';
+    searchError.classList.remove('hidden');
+    currentRegex = null;
+    refreshTable();
+    return;
+  }
+  searchError.classList.add('hidden');
+  searchError.textContent = '';
+  currentRegex = re;
+  refreshTable();
+}
+
+searchInput.addEventListener('input', handleSearch);
+searchCI.addEventListener('change', handleSearch);
+
+// Search chips
+document.querySelectorAll('.search-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    searchInput.value = chip.dataset.pattern;
+    handleSearch();
+    searchInput.focus();
+  });
+});
+
+// Sort
+document.querySelectorAll('.sort-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const field = btn.dataset.sort;
+    if (sortField === field) {
+      sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      sortField = field;
+      sortDirection = field === 'description' ? 'asc' : 'desc';
+    }
+
+    document.querySelectorAll('.sort-btn').forEach(b => {
+      b.setAttribute('aria-pressed', b.dataset.sort === sortField ? 'true' : 'false');
+    });
+
+    const arrows = { date: sortDirection === 'asc' ? '↑' : '↓', description: sortDirection === 'asc' ? 'A→Z' : 'Z→A', amount: sortDirection === 'asc' ? '↑' : '↓' };
+    btn.textContent = `${field.charAt(0).toUpperCase() + field.slice(1)} ${arrows[field]}`;
+
+    refreshTable();
+  });
+});
+
+// Edit / Delete delegation
+document.getElementById('records-body').addEventListener('click', e => {
+  const editBtn = e.target.closest('.btn-edit');
+  const deleteBtn = e.target.closest('.btn-delete');
+
+  if (editBtn) {
+    const record = state.records.find(r => r.id === editBtn.dataset.id);
+    if (record) {
+      startEdit(record);
+      navigateTo('add');
+      history.pushState(null, '', '#add');
+    }
+  }
+
+  if (deleteBtn) {
+    const record = state.records.find(r => r.id === deleteBtn.dataset.id);
+    if (record && confirm(`Delete "${record.description}"?`)) {
+      state.deleteRecord(record.id);
+      refreshTable();
+      announce('Transaction deleted');
+    }
+  }
+});
+
+// State changes
+state.subscribe(event => {
+  if (event.type === 'records-changed' && currentSection === 'transactions') {
+    refreshTable();
+  }
+});
+
+// Init
 state.init();
 
 initForm(() => {
