@@ -540,6 +540,44 @@
   border-color: var(--color-accent);
 }
 
+.btn-save-new-budget,
+.btn-cancel-new-budget {
+  font-size: 1rem;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-save-new-budget {
+  color: var(--color-success);
+}
+
+.btn-save-new-budget:hover {
+  background: var(--color-success);
+  color: #fff;
+}
+
+.btn-cancel-new-budget {
+  color: var(--color-danger);
+}
+
+.btn-cancel-new-budget:hover {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+.budget-table td .field-error {
+  margin-top: 0.2rem;
+  min-height: 0;
+}
+
 .currency-label {
   font-size: 0.85rem;
   font-weight: 500;
