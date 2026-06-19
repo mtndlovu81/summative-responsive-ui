@@ -1,3 +1,3 @@
 // localStorage + JSON import/export
-export const RECORDS_KEY = 'sft:records';
-export const SETTINGS_KEY = 'sft:settings';
+export const RECORDS_KEY = 'set:records';
+export const SETTINGS_KEY = 'set:settings';

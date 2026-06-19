@@ -1,4 +1,4 @@
-# Student Finance Tracker
+# Student Expense Tracker (SET)
 
 A fully client-side student expense tracker built with vanilla HTML, CSS, and JavaScript. Log daily expenses, visualise spending with charts and progress bars, and track how your habits measure up against the budget you set yourself.
 
@@ -10,7 +10,7 @@ A fully client-side student expense tracker built with vanilla HTML, CSS, and Ja
 ## Milestones
 
 - [x] M1 — Spec, Wireframes & Project Scaffold
-- [ ] M2 — Semantic HTML & Base CSS
+- [x] M2 — Semantic HTML & Base CSS
 - [ ] M3 — Forms & Regex Validation
 - [ ] M4 — Records Table, Sorting & Regex Search
 - [ ] M5 — Stats Dashboard & Budget Visualisations

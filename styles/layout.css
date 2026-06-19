@@ -1,1 +1,282 @@
-/* Layout — nav, shell, breakpoints */
+/* ── Shell ── */
+.app-header {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: 1rem;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.brand-logo {
+  color: var(--color-accent);
+}
+
+.brand-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--color-text);
+}
+
+.app-nav {
+  position: relative;
+}
+
+.app-nav ul {
+  display: flex;
+  gap: 0.25rem;
+  list-style: none;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.nav-link {
+  display: block;
+  padding: 0.5rem 0.75rem;
+  color: var(--color-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover,
+.nav-link[aria-current="page"] {
+  color: var(--color-text);
+}
+
+#main-content {
+  padding: 1.25rem 1rem;
+  max-width: 1200px;
+}
+
+.app-footer {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  border-top: 1px solid var(--color-border);
+}
+
+/* ── Base: ≤767px (mobile) ── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.charts-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.donut-figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.donut-wrapper {
+  max-width: 220px;
+  width: 100%;
+}
+
+.progress-panel {
+  margin-bottom: 1.5rem;
+}
+
+/* Table → card layout on mobile */
+#records-table thead {
+  display: none;
+}
+
+#records-table,
+#records-table tbody,
+#records-table tr,
+#records-table td {
+  display: block;
+}
+
+#records-table tr {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+#records-table td {
+  padding: 0.25rem 0;
+}
+
+#records-table td::before {
+  content: attr(data-label);
+  font-weight: 500;
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  display: block;
+}
+
+/* Form full-width on mobile */
+#transaction-form {
+  width: 100%;
+}
+
+/* ── 768px+ (tablet) ── */
+@media (min-width: 768px) {
+  .app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .header-brand {
+    margin-bottom: 0;
+  }
+
+  .stat-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .charts-row {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .donut-panel {
+    flex: 0 0 40%;
+  }
+
+  .line-panel {
+    flex: 0 0 60%;
+  }
+
+  .donut-figure {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  /* Table: normal layout */
+  #records-table thead {
+    display: table-header-group;
+  }
+
+  #records-table,
+  #records-table tbody {
+    display: table;
+    width: 100%;
+  }
+
+  #records-table tr {
+    display: table-row;
+    background: none;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    margin-bottom: 0;
+  }
+
+  #records-table td {
+    display: table-cell;
+    padding: 0.75rem 0.5rem;
+  }
+
+  #records-table td::before {
+    display: none;
+  }
+
+  #transaction-form {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  #main-content {
+    padding: 1.5rem;
+  }
+}
+
+/* ── 1024px+ (desktop) ── */
+@media (min-width: 1024px) {
+  body {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    grid-template-rows: 1fr auto;
+    min-height: 100vh;
+  }
+
+  .app-header {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 1.25rem;
+    border-bottom: none;
+    border-right: 1px solid var(--color-border);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 220px;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .header-brand {
+    margin-bottom: 1.5rem;
+  }
+
+  .app-nav ul {
+    flex-direction: column;
+    gap: 0.25rem;
+    overflow-x: visible;
+  }
+
+  .nav-link {
+    padding: 0.6rem 0.75rem;
+    border-radius: 6px;
+  }
+
+  .nav-link:hover {
+    background: var(--color-surface-2);
+  }
+
+  .nav-link[aria-current="page"] {
+    background: var(--color-surface-2);
+  }
+
+  #main-content {
+    grid-column: 2;
+    margin-left: 220px;
+    padding: 2rem;
+    max-width: 1100px;
+  }
+
+  .app-footer {
+    grid-column: 2;
+    margin-left: 220px;
+  }
+
+  .donut-panel {
+    flex: 0 0 35%;
+  }
+
+  .line-panel {
+    flex: 0 0 65%;
+  }
+
+  #transaction-form {
+    max-width: 560px;
+  }
+}

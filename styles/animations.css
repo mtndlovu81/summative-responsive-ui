@@ -1,1 +1,40 @@
-/* Animations — keyframes, transitions */
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.record-row { animation: slide-in 0.2s ease; }
+
+@keyframes draw-line {
+  from { stroke-dashoffset: var(--line-length, 1000); }
+  to   { stroke-dashoffset: 0; }
+}
+.line-path {
+  stroke-dasharray: var(--line-length, 1000);
+  animation: draw-line 0.5s ease-out forwards;
+}
+
+@keyframes bar-fill {
+  from { width: 0; }
+  to   { width: var(--bar-target, 0%); }
+}
+.cat-bar-fill, .cat-bar-over {
+  animation: bar-fill 0.3s ease-out forwards;
+}
+
+.nav-indicator {
+  position: absolute;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-accent), var(--color-accent-3));
+  transition: left 0.25s ease, width 0.25s ease;
+  left: var(--indicator-left, 0px);
+  width: var(--indicator-width, 0px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .record-row { animation: none; }
+  .nav-indicator { transition: none; }
+  .line-path { animation: none; stroke-dashoffset: 0; }
+  .cat-bar-fill, .cat-bar-over { animation: none; width: var(--bar-target, 0%); }
+  * { transition-duration: 0.01ms !important; }
+}

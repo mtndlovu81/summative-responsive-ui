@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Finance Tracker</title>
+  <title>Student Expense Tracker (SET)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
@@ -19,15 +19,16 @@
     <div class="header-brand">
       <svg class="brand-logo" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/>
-        <path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M8 12.5l3 3 5-6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      <span class="brand-name">FinanceTrack</span>
+      <span class="brand-name">SET</span>
     </div>
     <nav class="app-nav" aria-label="Main navigation">
       <ul role="list">
+        <li><a href="#" class="nav-link" data-section="dashboard" data-home="true">Home</a></li>
         <li><a href="#dashboard" class="nav-link" data-section="dashboard">Dashboard</a></li>
         <li><a href="#transactions" class="nav-link" data-section="transactions">Transactions</a></li>
-        <li><a href="#add" class="nav-link" data-section="add">+ Add</a></li>
+        <li><a href="#add" class="nav-link" data-section="add">Add +</a></li>
         <li><a href="#settings" class="nav-link" data-section="settings">Settings</a></li>
         <li><a href="#about" class="nav-link" data-section="about">About</a></li>
       </ul>
@@ -38,29 +39,250 @@
   <main id="main-content">
     <div role="status" aria-live="polite" id="live-region" class="sr-only"></div>
 
+    <!-- Dashboard -->
     <section id="dashboard" aria-labelledby="dashboard-heading">
       <h1 id="dashboard-heading">Dashboard</h1>
+
+      <div class="timeline-picker" role="group" aria-label="Select time period">
+        <button class="timeline-btn" data-timeline="7" aria-pressed="false">Past Week</button>
+        <button class="timeline-btn" data-timeline="30" aria-pressed="true">Past Month</button>
+        <button class="timeline-btn" data-timeline="90" aria-pressed="false">Past 90 Days</button>
+        <button class="timeline-btn" data-timeline="365" aria-pressed="false">This Year</button>
+        <button class="timeline-btn" data-timeline="all" aria-pressed="false">All Time</button>
+      </div>
+
+      <div class="stat-grid" role="list" aria-label="Summary statistics">
+        <article class="stat-card" role="listitem">
+          <dt>Total Spent</dt>
+          <dd id="stat-total" class="mono">$0.00</dd>
+          <span class="stat-sub" id="stat-total-sub"></span>
+        </article>
+        <article class="stat-card" role="listitem">
+          <dt>Transactions</dt>
+          <dd id="stat-count">0</dd>
+          <span class="stat-sub" id="stat-count-sub"></span>
+        </article>
+        <article class="stat-card" role="listitem">
+          <dt>Most Spent</dt>
+          <dd id="stat-top-cat">&mdash;</dd>
+          <span class="stat-sub mono" id="stat-top-amount"></span>
+        </article>
+        <article class="stat-card budget-card" role="listitem">
+          <dt>Overall Budget</dt>
+          <dd id="stat-budget-remaining" class="mono">&mdash;</dd>
+          <span class="stat-sub" id="stat-budget-sub"></span>
+        </article>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-panel donut-panel">
+          <h2 class="chart-title">Spending by Category</h2>
+          <figure class="donut-figure">
+            <div class="donut-wrapper">
+              <svg id="donut-svg" viewBox="0 0 220 220"
+                   role="img" aria-labelledby="donut-title donut-desc">
+                <title id="donut-title">Spending by category donut chart</title>
+                <desc id="donut-desc">Loading...</desc>
+              </svg>
+            </div>
+            <figcaption>
+              <ul id="donut-legend" class="donut-legend" role="list" aria-label="Category legend">
+              </ul>
+            </figcaption>
+          </figure>
+        </div>
+
+        <div class="chart-panel line-panel">
+          <h2 class="chart-title">Spending Over Time</h2>
+          <figure class="line-figure">
+            <svg id="line-svg" viewBox="0 0 600 220" preserveAspectRatio="xMidYMid meet"
+                 role="img" aria-labelledby="line-title line-desc">
+              <title id="line-title">Spending over time line graph</title>
+              <desc id="line-desc">Loading...</desc>
+            </svg>
+            <figcaption id="line-caption" class="sr-only"></figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="progress-panel">
+        <h2 class="chart-title">Budget by Category</h2>
+        <div id="category-bars" aria-label="Category budget progress">
+        </div>
+      </div>
     </section>
 
+    <!-- Transactions -->
     <section id="transactions" aria-labelledby="transactions-heading" hidden>
       <h1 id="transactions-heading">Transactions</h1>
+
+      <div class="search-bar">
+        <input type="search" id="search-input" aria-label="Search by regex" placeholder="e.g. coffee|lunch">
+        <label class="search-ci-label"><input type="checkbox" id="search-ci" checked> Case-insensitive</label>
+        <p id="search-error" role="alert" class="field-error hidden"></p>
+      </div>
+
+      <div class="search-chips">
+        <span class="chip-label">Try:</span>
+        <button class="search-chip" data-pattern="coffee|tea">coffee|tea</button>
+        <button class="search-chip" data-pattern="\.\d{2}\b">\.d{2}\b</button>
+        <button class="search-chip" data-pattern="\b(\w+)\s+\1\b">\b(\w+)\s+\1\b</button>
+        <button class="search-chip" data-pattern="^Lunch">^Lunch</button>
+      </div>
+
+      <div class="sort-controls">
+        <button class="sort-btn" data-sort="date" aria-pressed="true">Date ↓</button>
+        <button class="sort-btn" data-sort="description" aria-pressed="false">Description A↕Z</button>
+        <button class="sort-btn" data-sort="amount" aria-pressed="false">Amount ↕</button>
+      </div>
+
+      <table id="records-table">
+        <caption id="table-caption">Showing 0 transactions</caption>
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Description</th>
+            <th scope="col">Category</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="records-body">
+        </tbody>
+      </table>
+      <p id="empty-state" class="empty-state hidden">No transactions yet. Add one to get started!</p>
     </section>
 
+    <!-- Add / Edit -->
     <section id="add" aria-labelledby="add-heading" hidden>
-      <h1 id="add-heading">Add Transaction</h1>
+      <h2 id="add-heading">Add Transaction</h2>
+      <form id="transaction-form" novalidate>
+        <div class="form-group">
+          <label for="f-description">Description</label>
+          <input type="text" id="f-description" autocomplete="off" placeholder="e.g. Lunch at cafeteria">
+          <p id="warn-duplicate" class="field-warning hidden" role="alert">Duplicate word detected</p>
+          <p class="field-error" role="alert" id="err-description"></p>
+        </div>
+        <div class="form-group">
+          <label for="f-amount">Amount</label>
+          <input type="text" id="f-amount" inputmode="decimal" placeholder="e.g. 12.50">
+          <p class="field-error" role="alert" id="err-amount"></p>
+        </div>
+        <div class="form-group">
+          <label for="f-category">Category</label>
+          <select id="f-category">
+            <option value="Food">Food</option>
+            <option value="Books">Books</option>
+            <option value="Transport">Transport</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Fees">Fees</option>
+            <option value="Other">Other</option>
+          </select>
+          <p class="field-error" role="alert" id="err-category"></p>
+        </div>
+        <div class="form-group">
+          <label for="f-date">Date</label>
+          <input type="date" id="f-date">
+          <p class="field-error" role="alert" id="err-date"></p>
+        </div>
+        <div class="form-actions">
+          <button type="submit" id="form-submit">Save Transaction</button>
+          <button type="button" id="form-cancel" class="hidden">Cancel</button>
+        </div>
+      </form>
     </section>
 
+    <!-- Settings -->
     <section id="settings" aria-labelledby="settings-heading" hidden>
-      <h1 id="settings-heading">Settings</h1>
+      <h2 id="settings-heading">Settings</h2>
+
+      <div class="settings-group">
+        <h3>Budget</h3>
+        <table class="budget-table" id="budget-table">
+          <thead>
+            <tr>
+              <th scope="col">Category</th>
+              <th scope="col">Amount (USD)</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody id="budget-body">
+            <!-- Budget rows rendered by settings.js -->
+          </tbody>
+        </table>
+        <button id="btn-add-budget" class="btn-add-budget" aria-label="Add budget item">+ Add Budget Item</button>
+        <div class="settings-total-budget">
+          <span>Total Monthly Budget:</span>
+          <output id="total-budget" class="mono">$0.00</output>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <h3>Currency</h3>
+        <p class="settings-base-currency">Base currency: <strong>USD</strong></p>
+        <div id="settings-currencies">
+          <div class="currency-row">
+            <label class="currency-label">EUR</label>
+            <input type="text" class="currency-rate mono" value="0.92" inputmode="decimal" aria-label="EUR exchange rate" data-code="EUR">
+          </div>
+          <div class="currency-row">
+            <label class="currency-label">GBP</label>
+            <input type="text" class="currency-rate mono" value="0.79" inputmode="decimal" aria-label="GBP exchange rate" data-code="GBP">
+          </div>
+          <div class="currency-row">
+            <label class="currency-label">RWF</label>
+            <input type="text" class="currency-rate mono" value="1465.54" inputmode="decimal" aria-label="RWF exchange rate" data-code="RWF">
+          </div>
+          <div class="currency-row">
+            <input type="text" class="currency-code" maxlength="3" placeholder="e.g. ZAR" aria-label="Currency code" style="text-transform:uppercase">
+            <input type="text" class="currency-rate mono" placeholder="0.00" inputmode="decimal" aria-label="Exchange rate">
+          </div>
+        </div>
+        <button id="btn-save-currencies">Save Currencies</button>
+        <label class="convert-toggle"><input type="checkbox" id="s-show-converted"> Show converted amounts in table</label>
+        <div class="convert-select-row hidden" id="convert-select-row">
+          <label for="s-convert-to">Convert to:</label>
+          <select id="s-convert-to"></select>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <h3>Data</h3>
+        <div class="data-actions">
+          <label class="file-import-label" for="import-file">Import JSON</label>
+          <input type="file" id="import-file" accept=".json" class="sr-only">
+          <button id="btn-export">Export JSON</button>
+          <button id="btn-load-seed">Load Seed Data</button>
+        </div>
+      </div>
     </section>
 
+    <!-- About -->
     <section id="about" aria-labelledby="about-heading" hidden>
-      <h1 id="about-heading">About</h1>
+      <h2 id="about-heading">About</h2>
+      <div class="about-content">
+        <p>Student Expense Tracker (SET) helps students manage their expenses by logging daily spending and comparing it against personal budget limits per category.</p>
+        <h3>Features</h3>
+        <ul>
+          <li>Log and categorise expenses</li>
+          <li>Donut chart and line graph for spending visualisation</li>
+          <li>Per-category budget progress bars</li>
+          <li>Timeline picker to filter by period</li>
+          <li>Regex-powered transaction search with highlighting</li>
+          <li>JSON import/export for data portability</li>
+          <li>Multi-currency conversion support</li>
+        </ul>
+        <div class="author-card">
+          <h3>Author</h3>
+          <p>GitHub: <a href="https://github.com/mtndlovu81">https://github.com/mtndlovu81</a></p>
+          <p>Email: <a href="mailto:m.ndlovu1@alustudent.com">m.ndlovu1@alustudent.com</a></p>
+        </div>
+      </div>
     </section>
   </main>
 
   <footer class="app-footer">
-    <p>Student Finance Tracker &middot; Built with vanilla HTML/CSS/JS</p>
+    <p>Student Expense Tracker (SET)</p>
   </footer>
 
   <script type="module" src="scripts/main.js"></script>
