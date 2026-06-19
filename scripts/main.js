@@ -1,7 +1,7 @@
 import * as state from './state.js';
 import { initForm, startEdit } from './forms.js';
 import { initSettings } from './settings.js';
-import { renderTable, sortRecords, announce } from './ui.js';
+import { renderTable, sortRecords, announce, renderDashboard } from './ui.js';
 import { compileRegex } from './validators.js';
 import { filterByRegex } from './search.js';
 
@@ -27,6 +27,7 @@ function navigateTo(sectionId) {
   updateNavIndicator(sectionId);
 
   if (sectionId === 'transactions') refreshTable();
+  if (sectionId === 'dashboard') renderDashboard(state.records, state.settings);
 }
 
 function updateNavIndicator(sectionId) {
@@ -162,10 +163,24 @@ document.getElementById('records-body').addEventListener('click', e => {
   }
 });
 
+// Timeline picker
+document.querySelectorAll('.timeline-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.timeline-btn').forEach(b => b.setAttribute('aria-pressed', 'false'));
+    btn.setAttribute('aria-pressed', 'true');
+    state.updateSettings({ dashboardTimeline: btn.dataset.timeline });
+    renderDashboard(state.records, state.settings);
+  });
+});
+
 // State changes
 state.subscribe(event => {
-  if (event.type === 'records-changed' && currentSection === 'transactions') {
-    refreshTable();
+  if (event.type === 'records-changed') {
+    if (currentSection === 'transactions') refreshTable();
+    if (currentSection === 'dashboard') renderDashboard(state.records, state.settings);
+  }
+  if (event.type === 'settings-changed' && currentSection === 'dashboard') {
+    renderDashboard(state.records, state.settings);
   }
 });
 
@@ -178,6 +193,12 @@ initForm(() => {
 });
 
 initSettings();
+
+// Set initial timeline button
+const activeTimeline = state.settings.dashboardTimeline ?? '30';
+document.querySelectorAll('.timeline-btn').forEach(b => {
+  b.setAttribute('aria-pressed', b.dataset.timeline === activeTimeline ? 'true' : 'false');
+});
 
 const startHash = location.hash.slice(1) || 'dashboard';
 navigateTo(startHash);
