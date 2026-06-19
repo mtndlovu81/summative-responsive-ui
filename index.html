@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Finance Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/animations.css">
+</head>
+<body>
+  <a href="#main-content" class="sr-only skip-link">Skip to content</a>
+
+  <header class="app-header">
+    <div class="header-brand">
+      <svg class="brand-logo" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-name">FinanceTrack</span>
+    </div>
+    <nav class="app-nav" aria-label="Main navigation">
+      <ul role="list">
+        <li><a href="#dashboard" class="nav-link" data-section="dashboard">Dashboard</a></li>
+        <li><a href="#transactions" class="nav-link" data-section="transactions">Transactions</a></li>
+        <li><a href="#add" class="nav-link" data-section="add">+ Add</a></li>
+        <li><a href="#settings" class="nav-link" data-section="settings">Settings</a></li>
+        <li><a href="#about" class="nav-link" data-section="about">About</a></li>
+      </ul>
+      <div class="nav-indicator" aria-hidden="true"></div>
+    </nav>
+  </header>
+
+  <main id="main-content">
+    <div role="status" aria-live="polite" id="live-region" class="sr-only"></div>
+
+    <section id="dashboard" aria-labelledby="dashboard-heading">
+      <h1 id="dashboard-heading">Dashboard</h1>
+    </section>
+
+    <section id="transactions" aria-labelledby="transactions-heading" hidden>
+      <h1 id="transactions-heading">Transactions</h1>
+    </section>
+
+    <section id="add" aria-labelledby="add-heading" hidden>
+      <h1 id="add-heading">Add Transaction</h1>
+    </section>
+
+    <section id="settings" aria-labelledby="settings-heading" hidden>
+      <h1 id="settings-heading">Settings</h1>
+    </section>
+
+    <section id="about" aria-labelledby="about-heading" hidden>
+      <h1 id="about-heading">About</h1>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>Student Finance Tracker &middot; Built with vanilla HTML/CSS/JS</p>
+  </footer>
+
+  <script type="module" src="scripts/main.js"></script>
+</body>
+</html>

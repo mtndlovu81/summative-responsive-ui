@@ -1,0 +1,79 @@
+:root {
+  --color-bg:         #0A0F1E;
+  --color-surface:    #111827;
+  --color-surface-2:  #1A2235;
+  --color-border:     #1E2D45;
+  --color-accent:     #2563EB;
+  --color-accent-2:   #3B82F6;
+  --color-accent-3:   #60A5FA;
+  --color-success:    #10B981;
+  --color-danger:     #EF4444;
+  --color-warning:    #F59E0B;
+  --color-text:       #F0F4FF;
+  --color-muted:      #6B7A99;
+  --color-over:       #EF4444;
+  --color-unused:     #1E2D45;
+
+  --cat-food:           #2563EB;
+  --cat-books:          #7C3AED;
+  --cat-transport:      #0891B2;
+  --cat-entertainment:  #D97706;
+  --cat-fees:           #059669;
+  --cat-other:          #6B7280;
+  --cat-custom-1:       #DB2777;
+  --cat-custom-2:       #EA580C;
+  --cat-custom-3:       #65A30D;
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link:focus {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: auto;
+  height: auto;
+  padding: 0.75rem 1.5rem;
+  margin: 0;
+  clip: auto;
+  background: var(--color-accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Filled in animations.css */
+}
