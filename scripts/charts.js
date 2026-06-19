@@ -186,7 +186,8 @@ export function renderLineGraph(filtered, settings) {
 
     // Measure and set line length for animation
     requestAnimationFrame(() => {
-      const len = line.getTotalLength?.() || 1000;
+      let len = 1000;
+      try { len = line.getTotalLength(); } catch {};
       line.style.setProperty('--line-length', len);
       line.setAttribute('stroke-dasharray', len);
       line.setAttribute('stroke-dashoffset', len);

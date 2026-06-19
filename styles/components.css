@@ -74,6 +74,8 @@
   border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 1.25rem;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .chart-title {
@@ -113,6 +115,13 @@
 #line-svg {
   width: 100%;
   height: auto;
+  display: block;
+}
+
+#donut-svg {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 /* ── Category Progress Bars ── */

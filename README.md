@@ -17,6 +17,9 @@ A fully client-side student expense tracker built with vanilla HTML, CSS, and Ja
 - Auto-formatting of amounts (100 → 100.00)
 - "Other" as permanent catch-all category for unbudgeted expenses
 
+## Try the App
+- [Student Expense Tracker](https://mtndlovu81.github.io/summative-responsive-ui/)
+
 ## How to Run
 
 1. Clone or download this repository
@@ -100,8 +103,6 @@ student-finance-tracker/
 ├── tests.html
 ├── seed.json
 ├── README.md
-├── SPEC.md
-├── DECISIONS.md
 ├── styles/
 │   ├── base.css          ← reset, custom properties, typography
 │   ├── layout.css        ← nav, shell, breakpoints

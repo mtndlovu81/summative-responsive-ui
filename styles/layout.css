@@ -56,6 +56,12 @@
 #main-content {
   padding: 1.25rem 1rem;
   max-width: 1200px;
+  overflow-x: hidden;
+}
+
+section {
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .app-footer {
@@ -79,6 +85,7 @@
   flex-direction: column;
   gap: 1.5rem;
   margin-bottom: 1.5rem;
+  min-width: 0;
 }
 
 .donut-figure {
@@ -158,11 +165,13 @@
   }
 
   .donut-panel {
-    flex: 0 0 40%;
+    flex: 1 1 38%;
+    min-width: 0;
   }
 
   .line-panel {
-    flex: 0 0 60%;
+    flex: 1 1 58%;
+    min-width: 0;
   }
 
   .donut-figure {
@@ -271,11 +280,13 @@
   }
 
   .donut-panel {
-    flex: 0 0 35%;
+    flex: 1 1 33%;
+    min-width: 0;
   }
 
   .line-panel {
-    flex: 0 0 65%;
+    flex: 1 1 63%;
+    min-width: 0;
   }
 
   #transaction-form {

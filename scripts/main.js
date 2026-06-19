@@ -211,4 +211,4 @@ document.querySelectorAll('.timeline-btn').forEach(b => {
 const startHash = location.hash.slice(1) || 'dashboard';
 navigateTo(startHash);
 
-console.log('SFT loaded');
+console.log('SET loaded');
